@@ -53,6 +53,11 @@ module PuppetDB
       pem    = hash_get(settings, 'pem')
       token  = hash_get(settings, 'token')
 
+      # this will override the FixSSLConnectionAdapter setting
+      if settings.key?(:verify)
+        self.class.default_options[:verify] = settings[:verify]
+      end
+
       scheme = URI.parse(server).scheme
 
       unless %w[http https].include? scheme
@@ -67,7 +72,7 @@ module PuppetDB
           raise error_msg
         end
 
-        self.class.default_options = { pem: pem }
+        self.class.default_options[:pem] = pem
         self.class.connection_adapter(FixSSLConnectionAdapter)
       end
 
