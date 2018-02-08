@@ -51,6 +51,7 @@ module PuppetDB
 
       server = hash_get(settings, 'server')
       pem    = hash_get(settings, 'pem')
+      token  = hash_get(settings, 'token')
 
       scheme = URI.parse(server).scheme
 
@@ -68,6 +69,10 @@ module PuppetDB
 
         self.class.default_options = { pem: pem }
         self.class.connection_adapter(FixSSLConnectionAdapter)
+      end
+
+      if token
+        self.class.headers({'X-Authentication' => token})
       end
 
       self.class.base_uri(server)
